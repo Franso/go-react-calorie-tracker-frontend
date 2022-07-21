@@ -78,6 +78,7 @@ const Entries = () => {
 
             <Form.Label>fat</Form.Label>
             <Form.Control
+              type="number"
               onChange={(event) => {
                 newEntry.fat = event.target.value;
               }}
@@ -113,6 +114,49 @@ const Entries = () => {
           </Form.Group>
         </Modal.Body>
       </Modal>
+
+      <Modal
+        show={changeEntry.change}
+        onHide={() => setChangeEntry({ change: false, id: 0 })}
+        centered
+      >
+        <Modal.Header closeButton>
+          <Modal.Title>Change Entry</Modal.Title>
+        </Modal.Header>
+        <Modal.Body>
+          <Form.Group>
+            <Form.Label>dish</Form.Label>
+            <Form.Control
+              onChange={(event) => {
+                newEntry.dish = event.target.value;
+              }}
+            ></Form.Control>
+            <Form.Label>ingredients</Form.Label>
+            <Form.Control
+              onChange={(event) => {
+                newEntry.ingredients = event.target.value;
+              }}
+            ></Form.Control>
+            <Form.Label>calories</Form.Label>
+            <Form.Control
+              onChange={(event) => {
+                newEntry.calories = event.target.value;
+              }}
+            ></Form.Control>
+            <Form.Label>fat</Form.Label>
+            <Form.Control
+              type="number"
+              onChange={(event) => {
+                newEntry.fat = event.target.value;
+              }}
+            ></Form.Control>
+          </Form.Group>
+          <Button onClick={() => changeSingleEntry()}>Change</Button>
+          <Button onClick={() => setChangeEntry({ change: false, id: 0 })}>
+            Cancel
+          </Button>
+        </Modal.Body>
+      </Modal>
     </div>
   );
 
@@ -134,7 +178,7 @@ const Entries = () => {
   }
 
   function deleteSingleEntry(id) {
-    var url = "http:localhost:8000/entries/delete" + id;
+    var url = "http:localhost:8000/entries/delete/" + id;
     axios.delete(url, {}).then((response) => {
       if (response.status == 200) {
         setRefreshData(true);
@@ -154,4 +198,33 @@ const Entries = () => {
         }
       });
   }
+
+  function changeSingleEntry() {
+    changeEntry.change = false;
+    var url = "http://localhost:8000/entry/update/" + changeEntry.id;
+
+    axios.put(url, newEntry).then((response) => {
+      if (response.status == 200) {
+        setRefreshData(true);
+      }
+    });
+  }
+
+  function changeIngredientForEntry() {
+    changeIngredient.change = false;
+    var url = "http://localhost:8000/ingredient/update/" + changeEntry.id;
+
+    axios
+      .put(url, {
+        ingredients: newIngredientName,
+      })
+      .then((response) => {
+        console.log(response.status);
+        if (response.status == 200) {
+          setRefreshData(true);
+        }
+      });
+  }
 };
+
+export default Entries;
