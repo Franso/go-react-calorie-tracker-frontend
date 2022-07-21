@@ -4,8 +4,51 @@ import { Button, Form, Container, Modal } from "react-bootstrap";
 
 import Entry from "./single-entry.component";
 
-function Entries() {
-  return <div> Entries</div>;
+const Entries = () => {
+  return (
+    <div>
+      <Container>
+        <Button onClick={() => setAddNewEntry(true)}>
+          Track today's calories
+        </Button>
+      </Container>
+      <Container>
+        {entries != null &&
+          entries.map((entry, i) => (
+            <Entry
+              entryData={entry}
+              deleteSingleEntry={deleteSingleEntry}
+              setChangeIngredient={setChangeIngredient}
+              setChangeEntry={setChangeEntry}
+            />
+          ))}
+      </Container>
+    </div>
+  );
+};
+
+function addSingleEntry() {
+  setAddNewEntry(false);
+  var url = "http://localhost:8000/entry/create";
+  axios
+    .post(url, {
+      ingredients: newEntry.ingredients,
+      dish: newEntry.dish,
+      calorie: newEntry.calorie,
+      fat: parseFloat(newEntry.fat),
+    })
+    .then((response) => {
+      if (response.status == 200) {
+        setRefreshData(true);
+      }
+    });
 }
 
-export default Entries;
+function deleteSingleEntry(id) {
+  var url = "http:localhost:8000/entries/delete" + id;
+  axios.delete(url, {}).then((response) => {
+    if (response.status == 200) {
+      setRefreshData(true);
+    }
+  });
+}
