@@ -5,6 +5,31 @@ import { Button, Form, Container, Modal } from "react-bootstrap";
 import Entry from "./single-entry.component";
 
 const Entries = () => {
+  const [entries, setEntries] = useState([]);
+  const [refreshData, setRefreshData] = useState(false);
+  const [changeEntry, setChangeEntry] = useState({ change: false, id: 0 });
+  const [changeIngredient, setChangeIngredient] = useState({
+    change: false,
+    id: 0,
+  });
+  const [newIngredientName, setNewIngredientName] = useState("");
+  const [addNewEntry, setAddNewEntry] = useState(false);
+  const [newEntry, setNewEntry] = useState({
+    dish: "",
+    ingredients: "",
+    calories: 0,
+    fat: 0,
+  });
+
+  useEffect(() => {
+    getAllEntries();
+  }, []);
+
+  if (refreshData) {
+    setRefreshData(false);
+    getAllEntries();
+  }
+
   return (
     <div>
       <Container>
@@ -51,4 +76,17 @@ function deleteSingleEntry(id) {
       setRefreshData(true);
     }
   });
+}
+
+function getAllEntries() {
+  var url = "http://localhost:8000/entries";
+  axios
+    .get(url, {
+      responseType: "json",
+    })
+    .then((response) => {
+      if (response.status == 200) {
+        setEntries(response.data);
+      }
+    });
 }
